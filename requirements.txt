@@ -1,0 +1,20 @@
+# =============================================================================
+# Databricks + Iceberg Learning Project — Local Development Dependencies
+# =============================================================================
+# These packages provide IDE support (autocomplete, type-checking, linting).
+# The notebooks themselves run on a Databricks cluster, not locally.
+#
+# Usage:
+#   python -m venv .venv
+#   source .venv/bin/activate
+#   pip install -r requirements.txt
+# =============================================================================
+
+# --- PySpark (matches Databricks Runtime 14.3 LTS → Spark 3.5.x) -----------
+pyspark>=3.5.0,<3.6.0
+
+# --- Linting & formatting ---------------------------------------------------
+ruff
+
+# --- Databricks CLI (optional: import/export notebooks, manage clusters) -----
+databricks-cli

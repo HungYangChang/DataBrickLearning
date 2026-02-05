@@ -8,7 +8,8 @@
 
 1. **New to Iceberg?** → Start with [Core Concepts](docs/01-iceberg-concepts.md)
 2. **Ready to code?** → Set up [Databricks Environment](docs/02-databricks-setup.md)
-3. **Have issues?** → Check the [Troubleshooting Guide](docs/08-troubleshooting.md)
+3. **Run the notebooks** → See [How to Run](#how-to-run-the-notebooks) below
+4. **Have issues?** → Check the [Troubleshooting Guide](docs/08-troubleshooting.md)
 
 ---
 
@@ -91,12 +92,87 @@ Week 3: Advanced Features
 
 ---
 
+## Local Development Setup
+
+The notebooks run on **Databricks**, but a local virtual environment gives you IDE autocomplete, linting, and access to the Databricks CLI.
+
+```bash
+# 1. Clone the repo
+git clone <repo-url> && cd DataBrickLearning
+
+# 2. Create a virtual environment
+python3 -m venv .venv
+
+# 3. Activate it
+source .venv/bin/activate        # macOS / Linux
+# .venv\Scripts\activate         # Windows
+
+# 4. Install dependencies
+pip install -r requirements.txt
+```
+
+**What gets installed:**
+
+| Package | Purpose |
+|---------|---------|
+| `pyspark` | IDE autocomplete & type-checking for Spark code |
+| `ruff` | Fast Python linter & formatter |
+| `databricks-cli` | Import/export notebooks, manage clusters from terminal |
+
+---
+
+## How to Run the Notebooks
+
+> **Important:** These are Databricks-format notebooks (`.py` with `# MAGIC` cells).
+> They **must** run on a Databricks cluster — they cannot be executed locally with `python`.
+
+### Option A: Import via Databricks UI (Recommended)
+
+1. Open your Databricks workspace
+2. Navigate to **Workspace** → **Users** → your user folder
+3. Click **Import** (top-right dropdown)
+4. Choose **File** and select the `.py` notebook (e.g., `notebooks/01-setup-and-initial-load.py`)
+5. Attach to your `iceberg-learning` cluster
+6. Run cells with **Shift + Enter**
+
+### Option B: Import via Databricks CLI
+
+```bash
+# One-time setup: configure authentication
+databricks configure --token
+#   Host: https://<your-workspace>.cloud.databricks.com
+#   Token: <your personal access token>
+
+# Import a single notebook
+databricks workspace import \
+  notebooks/01-setup-and-initial-load.py \
+  /Users/<your-email>/iceberg-learning/01-setup-and-initial-load \
+  --language PYTHON --overwrite
+
+# Or import the entire notebooks/ folder
+databricks workspace import_dir \
+  notebooks/ \
+  /Users/<your-email>/iceberg-learning \
+  --overwrite
+```
+
+### Option C: Databricks Repos (Git Integration)
+
+1. Push this repo to GitHub / GitLab / etc.
+2. In Databricks, go to **Repos** → **Add Repo**
+3. Paste the repo URL
+4. Open notebooks directly from the Repos UI — changes sync with Git
+
+---
+
 ## Project Structure
 
 ```
 DataBrickLearning/
 │
 ├── README.md                          ← You are here
+├── requirements.txt                   ← Python dependencies for local dev
+├── .gitignore                         ← Excludes .venv, __pycache__, etc.
 │
 ├── docs/
 │   ├── 01-iceberg-concepts.md         ← Core concepts explained
@@ -108,12 +184,12 @@ DataBrickLearning/
 │   ├── 07-phase5-multi-engine.md      ← Multi-engine access
 │   └── 08-troubleshooting.md          ← Problem solving guide
 │
-├── notebooks/                         ← (Create as you progress)
-│   ├── 01-setup-and-initial-load.py
-│   ├── 02-merge-operations.py
-│   ├── 03-time-travel-audit.py
-│   ├── 04-schema-evolution.py
-│   └── 05-multi-engine-test.py
+├── notebooks/                         ← Databricks notebooks (.py source format)
+│   ├── 01-setup-and-initial-load.py   ← Phase 1: Create table, load 1K products
+│   ├── 02-merge-operations.py         ← (Phase 2: coming next)
+│   ├── 03-time-travel-audit.py        ← (Phase 3)
+│   ├── 04-schema-evolution.py         ← (Phase 4)
+│   └── 05-multi-engine-test.py        ← (Phase 5)
 │
 └── sample-data/                       ← (Optional: store test data)
     └── products_sample.csv
@@ -164,6 +240,7 @@ product_id | price  | valid_from | valid_to   | is_current
 ## Prerequisites
 
 - **Required:**
+  - Python 3.9+ (for local virtual environment)
   - Basic SQL knowledge
   - Databricks account (free Community Edition works)
   
